@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Tickets - Sistema de Tickets de Reclamos</title>
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body class="tickets-page">
+    <div class="tickets-wrapper">
+        <header class="tickets-header">
+            <div class="tickets-header-left">
+                <h1>🎫 Mis Tickets de Reclamos</h1>
+                <p>Listado y detalle de tus solicitudes</p>
+            </div>
+            <button id="logout-btn" class="btn btn-secondary">Cerrar Sesión</button>
+        </header>
+        
+        <main class="tickets-content">
+            <div class="user-info-card">
+                <h2>👤 Información del Usuario</h2>
+                <p><strong>Nombre:</strong> <span id="user-nombre"></span></p>
+                <p><strong>Contacto:</strong> <span id="user-contacto"></span></p>
+                <p><strong>ID:</strong> <span id="user-id"></span></p>
+            </div>
+            
+            <h2 class="section-title">📋 Listado de Tickets</h2>
+            <div id="message" class="message"></div>
+            
+            <div class="table-container">
+                <table class="tickets-table">
+                    <thead>
+                        <tr>
+                            <th>ID Ticket</th>
+                            <th>Fecha de Apertura</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tickets-tbody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <div class="icon">📭</div>
+                <p>No tienes tickets registrados</p>
+            </div>
+            
+            <div id="ticket-detail" class="ticket-detail-card">
+                <h2>🔍 Detalle del Ticket</h2>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <label>ID Ticket</label>
+                        <div class="value" id="detail-id"></div>
+                    </div>
+                    <div class="detail-item">
+                        <label>ID Cliente</label>
+                        <div class="value" id="detail-cliente"></div>
+                    </div>
+                    <div class="detail-item">
+                        <label>Estado de Solución</label>
+                        <div class="value" id="detail-estado"></div>
+                    </div>
+                    <div class="detail-item">
+                        <label>Fecha de Apertura</label>
+                        <div class="value" id="detail-fecha-apertura"></div>
+                    </div>
+                    <div class="detail-item">
+                        <label>Último Contacto</label>
+                        <div class="value" id="detail-ultimo-contacto"></div>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h3>📝 Descripción</h3>
+                    <p id="detail-descripcion"></p>
+                </div>
+                <div class="detail-section">
+                    <h3>💡 Solución</h3>
+                    <p id="detail-solucion"></p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.7.7/dist/axios.min.js"></script>
+    <script type="module" src="js/listTicket.js"></script>
+</body>
+</html>

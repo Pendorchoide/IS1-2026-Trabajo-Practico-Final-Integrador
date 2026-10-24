@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Sistema de Tickets de Reclamos</title>
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="icon">📝</div>
+            <h1>Crear Cuenta</h1>
+            <p>Regístrate para gestionar tus tickets</p>
+        </div>
+        <form id="register-form">
+            <div class="form-group">
+                <label for="nombre">Nombre Completo</label>
+                <input id="nombre" name="nombre" type="text" placeholder="Ingresa tu nombre completo" required>
+            </div>
+            <div class="form-group">
+                <label for="contacto">Email / Contacto</label>
+                <input id="contacto" name="contacto" type="email" placeholder="ejemplo@correo.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input id="password" name="password" type="password" placeholder="Ingresa tu contraseña" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirmar Contraseña</label>
+                <input id="confirmPassword" name="confirmPassword" type="password" placeholder="Confirma tu contraseña" required>
+            </div>
+            <div class="checkbox-group">
+                <input id="terms" name="terms" type="checkbox" required>
+                <label for="terms">Acepto los Términos y Condiciones del servicio</label>
+            </div>
+            <div id="message" class="message"></div>
+            <button type="submit" class="btn">Registrarse</button>
+        </form>
+        <div class="auth-links">
+            <a href="login.html">¿Ya tienes cuenta? Inicia sesión</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.7.7/dist/axios.min.js"></script>
+    <script type="module" src="js/register.js"></script>
+</body>
+</html>
