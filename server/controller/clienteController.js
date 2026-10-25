@@ -1,5 +1,6 @@
 import { docClient } from "../aws.js";
 import crypto from 'crypto';
+import { toClienteDTO, toClienteAuthDTO } from "../utils/dto.js";
 
 export class ClienteController {
 
@@ -13,29 +14,20 @@ export class ClienteController {
     
         const callback = (err, data) => {
             if (err)  {
-                res.status(400).send({ status: "ERROR", message: "DB access error." });
+                res.status(400).json({ status: "ERROR", message: "DB access error." });
                 return;
             }
     
-            if (Object.keys(data).length === 0) {
-                res.status(400).send({"response":"ERROR",message : "Cliente no existe."})
+            if (!data.Item) {
+                res.status(400).json({"response":"ERROR",message : "Cliente no existe."})
+                return;
             }
             
-            res.status(200).send({ 
+            res.status(200).json({ 
                 status: "OK", 
-                cliente: {
-                    activo                : data.Item.activo,
-                    baja                  : data.Item.baja,
-                    contacto              : data.Item.contacto,
-                    fecha_alta            : data.Item.fecha_alta,
-                    fecha_cambio_password : data.Item.fecha_cambio_password,
-                    fecha_ultimo_ingreso  : data.Item.fecha_ultimo_ingreso,
-                    id                    : data.Item.id,
-                    nombre                : data.Item.nombre,
-                    primer_ingreso        : data.Item.primer_ingreso,
-                    registrado            : data.Item.registrado
-                } 
-                
+                data: {
+                    cliente: toClienteDTO(data.Item)
+                }
             });
         }
     
@@ -52,12 +44,12 @@ export class ClienteController {
 
         // VALIDATIONS
         if (!contacto) {
-            res.status(400).send({ status : "ERROR", message : "Se requiere un contacto." });
+            res.status(400).json({ status : "ERROR", message : "Se requiere un contacto." });
             return;
         }
 
         if (!password) {
-            res.status(400).send({ status : "ERROR", message : "Se requiere contraseña" });
+            res.status(400).json({ status : "ERROR", message : "Se requiere contraseña" });
             return;
         }
 
@@ -71,34 +63,33 @@ export class ClienteController {
 
         const callback = (err, data) => {
             if (err) {
-                res.status(500).send({ status: "ERROR", message: "DB Access Error" });
+                res.status(500).json({ status: "ERROR", message: "DB Access Error" });
                 return;
             }
 
             // Al igual que query, scan devuelve un array en 'Items'
             if (!data.Items || data.Items.length === 0) {
-                res.status(404).send({ status: "ERROR", message: "Cliente no encontrado" });
+                res.status(404).json({ status: "ERROR", message: "Cliente no encontrado" });
                 return;
             }
 
             const cliente = data.Items[0];
             
             if (password != cliente.password) {
-                res.status(400).send({ status: "ERROR", message: "Credenciales Invalidas." });
+                res.status(400).json({ status: "ERROR", message: "Credenciales Invalidas." });
                 return;
             }
 
             if (!cliente.activo) {
-                res.status(400).send({ status: "ERROR", message: "Cliente NO Activo." });
+                res.status(400).json({ status: "ERROR", message: "Cliente NO Activo." });
                 return;
             }
 
-            res.status(200).send({
+            res.status(200).json({
                 status: "OK",
-                id: cliente.id,
-                nombre: cliente.nombre,
-                contacto: cliente.contacto,
-                fecha_ultimo_ingreso: cliente.fecha_ultimo_ingreso
+                data: {
+                    cliente: toClienteAuthDTO(cliente)
+                }
             });    
         };
 
@@ -172,16 +163,8 @@ export class ClienteController {
                 } else {
                     res.status(200).json({ 
                         status: "OK", 
-                        "cliente": {
-                            id: newCliente.id,
-                            contacto: newCliente.contacto,
-                            nombre: newCliente.nombre, 
-                            activo: newCliente.activo,
-                            registrado: newCliente.registrado,
-                            primer_ingreso: newCliente.primer_ingreso,
-                            fecha_alta: newCliente.fecha_alta,
-                            fecha_cambio_password: newCliente.fecha_cambio_password,
-                            fecha_ultimo_ingreso: newCliente.fecha_ultimo_ingreso,
+                        data: {
+                            cliente: toClienteDTO(newCliente)
                         }
                     });
                 }
@@ -201,12 +184,12 @@ export class ClienteController {
 
 
         if (!contacto) {
-            res.status(400).send({status: "ERROR" , message: "Se requiere CONTACTO"});
+            res.status(400).json({status: "ERROR" , message: "Se requiere CONTACTO"});
             return;
         }
 
         if (!newPassword) {
-            res.status(400).send({status: "ERROR" , message: "Se requiere NEW_PASSWORD"});
+            res.status(400).json({status: "ERROR" , message: "Se requiere NEW_PASSWORD"});
             return;
         }
 
@@ -244,15 +227,85 @@ export class ClienteController {
 
             docClient.update(paramsUpdate, function (err, data) {
                 if (err)  {
-                    res.status(400).send({ status: "ERROR", message : "DB access error." });
+                    res.status(400).json({ status: "ERROR", message : "DB access error." });
                     return;
                 } else {
-                    res.status(200).send({ status: "OK", message : "updated" , "data": data });
+                    res.status(200).json({ status: "OK", data: { message: "Contraseña actualizada correctamente" } });
                     return;
                 }    
             });    
         }
 
         docClient.scan(paramsScan, callback);
+    }
+
+    static updateClienteById = (req,res) => {
+        const { id } = req.params;
+        const { nombre, password, activo, registrado } = req.body;
+
+        if (!id) {
+            res.status(400).json({ status: "ERROR", message: "Se requiere ID."});
+            return;
+        }
+
+        if (!nombre) {
+            res.status(400).json({ status: "ERROR", message: "Se requiere NOMBRE"});
+            return;
+        }
+
+        if (!password) {
+            res.status(400).json({ status: "ERROR", message: "Se requiere CONTRASEÑA"});
+            return;
+        }
+
+        const params = {
+            TableName: "cliente",
+            Key: { id }
+        };
+
+        const callback = (err, data) => {
+            if (err)  {
+                res.status(400).json({ status: "ERROR", message : "DB access error." });
+                return;
+            } 
+
+            if (!data.Item) {
+                    res.status(400).json({ "response":"ERROR",message : "Cliente no existe" });
+                    return;
+            }
+
+
+            const paramsUpdate = { 
+                ExpressionAttributeNames: { 
+                    "#a": "activo", 
+                    "#n": "nombre",
+                    "#p": "password",
+                    "#r": "registrado"
+                }, 
+                ExpressionAttributeValues: { 
+                    ":a": activo , 
+                    ":p": password,
+                    ":n": nombre , 
+                    ":r": registrado 
+                },
+                Key: { 
+                    "id": id 
+                },
+                ReturnValues: "ALL_NEW", 
+                TableName: "cliente", 
+                UpdateExpression: "SET #n = :n, #p = :p, #a = :a, #r = :r" 
+            };
+
+            docClient.update(paramsUpdate, (err, dataUpdate) => {
+                if (err)  {
+                    res.status(400).json({ status: "ERROR", message : "DB access error." });
+                    return;
+                }
+                
+                res.status(200).json({ status: "OK", data: { cliente: toClienteDTO(dataUpdate.Attributes) } });
+            });
+        }
+            
+        docClient.get(params, callback);
     }
 }

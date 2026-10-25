@@ -12,14 +12,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.listen(
-    PORT,
-    () => console.log("Server running on port: ", PORT)
-);
 
-app.get('/api/health', (_, res) => {
-    res.status(200).send({response : "OK", message : "API Ready"});
+app.get('/health', (_, res) => {
+    res.status(200).json({ status : "OK", message : "API Ready" });
 });
 
 app.use("/clientes", clienteRouter);
 app.use("/tickets", ticketRouter);
+
+app.listen(PORT, () => {
+    console.log(`Server running on port: ${PORT}`);
+});
