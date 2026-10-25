@@ -1,0 +1,82 @@
+:root {
+    color-scheme: light;
+
+    --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+        monospace;
+
+    --background: #fafafa;
+    --foreground: #09090b;
+    --card: #ffffff;
+    --muted: #f4f4f5;
+    --muted-foreground: #52525b;
+    --subtle-foreground: #71717a;
+    --border: #e4e4e7;
+    --border-strong: #d4d4d8;
+    --input: #ffffff;
+
+    --primary: #18181b;
+    --primary-hover: #27272a;
+    --primary-foreground: #fafafa;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-foreground: #ffffff;
+    --accent-soft: #eff6ff;
+    --accent-border: #bfdbfe;
+    --ring: #2563eb;
+
+    --success: #067647;
+    --success-soft: #ecfdf3;
+    --success-border: #abefc6;
+    --warning: #b54708;
+    --warning-soft: #fffaeb;
+    --warning-border: #fedf89;
+    --info: #175cd3;
+    --info-soft: #eff8ff;
+    --info-border: #b2ddff;
+    --danger: #b42318;
+    --danger-soft: #fef3f2;
+    --danger-border: #fecdca;
+
+    --accent-rgb: 37 99 235;
+    --success-rgb: 6 118 71;
+    --warning-rgb: 181 71 8;
+    --danger-rgb: 180 35 24;
+
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+
+    --radius-sm: 6px;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+    --shadow-md: 0 8px 24px -4px rgb(0 0 0 / 0.08);
+    --shadow-lg: 0 24px 48px -12px rgb(0 0 0 / 0.14);
+
+    --focus-ring: 0 0 0 3px rgb(var(--accent-rgb) / 0.18);
+    --transition-fast: 150ms;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.8125rem;
+    --font-size-base: 0.875rem;
+    --font-size-md: 0.9375rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.375rem;
+    --font-size-2xl: 1.75rem;
+    --font-size-3xl: 2rem;
+
+    --container: 1120px;
+}

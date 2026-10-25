@@ -1,48 +1,71 @@
 import { API } from "./api.js";
+import {
+    clearMessage,
+    initPasswordToggles,
+    setButtonLoading,
+    showMessage
+} from "./ui.js";
 
 const loginForm = document.getElementById("login-form");
 const messageDiv = document.getElementById("message");
+const submitButton = loginForm.querySelector('button[type="submit"]');
 
-function showMessage(text, type) {
-    messageDiv.textContent = text;
-    messageDiv.className = `message ${type}`;
-}
+initPasswordToggles();
 
-loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData(loginForm);
-    const data = Object.fromEntries(formData);
-    
+loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearMessage(messageDiv);
+
+    const data = Object.fromEntries(new FormData(loginForm));
+    const contacto = String(data.contacto || "").trim();
+    const password = String(data.password || "");
+
     if (!data.terms) {
-        showMessage("Debes aceptar los Términos y Condiciones", "error");
+        showMessage(
+            messageDiv,
+            "Debés aceptar los Términos y Condiciones",
+            "error"
+        );
         return;
     }
-    
-    const contacto = data.contacto;
-    const password = data.password;
-    
+
+    setButtonLoading(submitButton, true);
+
     try {
-        const res = await API.login(contacto, password);
-        
-        if (res.status === 200 && res.data.status === "OK") {
-            localStorage.setItem("userId", res.data.id);
+        const response = await API.login(contacto, password);
+
+        const payload = response.data?.data ?? response.data;
+        const cliente = payload?.cliente ?? payload;
+
+        if (response.status === 200 && response.data.status === "OK" && cliente?.id) {
+            localStorage.setItem("userId", cliente.id);
             localStorage.setItem("userPassword", password);
-            localStorage.setItem("userContacto", res.data.contacto);
-            localStorage.setItem("userNombre", res.data.nombre);
-            
-            showMessage("Inicio de sesión exitoso", "success");
+            localStorage.setItem("userContacto", cliente.contacto);
+            localStorage.setItem("userNombre", cliente.nombre);
+
+            showMessage(
+                messageDiv,
+                "Inicio de sesión exitoso. Redirigiendo...",
+                "success"
+            );
+
             setTimeout(() => {
                 window.location.href = "listTicket.html";
-            }, 500);
+            }, 600);
         } else {
-            showMessage(res.data.message || "Error al iniciar sesión", "error");
+            showMessage(
+                messageDiv,
+                response.data.message || "Error al iniciar sesión",
+                "error"
+            );
+            setButtonLoading(submitButton, false);
         }
     } catch (error) {
-        if (error.response) {
-            showMessage(error.response.data.message || "Error al iniciar sesión", "error");
-        } else {
-            showMessage("Error de conexión con el servidor", "error");
-        }
+        const message = error.response
+            ? error.response.data.message || "Error al iniciar sesión"
+            : "Error de conexión con el servidor";
+
+        showMessage(messageDiv, message, "error");
+        setButtonLoading(submitButton, false);
     }
 });
