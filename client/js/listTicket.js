@@ -5,9 +5,12 @@ const userId = localStorage.getItem("userId");
 const userPassword = localStorage.getItem("userPassword");
 const userContacto = localStorage.getItem("userContacto");
 const userNombre = localStorage.getItem("userNombre");
+const userLastLogin = localStorage.getItem("userLastLogin");
 
 const userNombreEl = document.getElementById("user-nombre");
 const userContactoEl = document.getElementById("user-contacto");
+const userIdEl = document.getElementById("user-id");
+const userLastLoginEl = document.getElementById("user-last-login");
 const userAvatarEl = document.getElementById("user-avatar");
 const ticketsTbody = document.getElementById("tickets-tbody");
 const ticketsTable = ticketsTbody.closest("table");
@@ -279,6 +282,8 @@ function loadTickets() {
 
     userNombreEl.textContent = userNombre || "Usuario";
     userContactoEl.textContent = userContacto || "Sin contacto";
+    userIdEl.textContent = userId || "—";
+    userLastLoginEl.textContent = formatDate(userLastLogin);
     userAvatarEl.textContent = initials(userNombre || userContacto);
 
     resetStats();
@@ -311,10 +316,20 @@ function loadTickets() {
                 userNombreEl.textContent = payload.cliente.nombre || "Usuario";
                 userContactoEl.textContent =
                     payload.cliente.contacto || "Sin contacto";
+                userIdEl.textContent = payload.cliente.id || userId || "—";
                 userAvatarEl.textContent = initials(
                     payload.cliente.nombre || payload.cliente.contacto
                 );
 
+                if (payload.cliente.fecha_ultimo_ingreso) {
+                    userLastLoginEl.textContent = formatDate(
+                        payload.cliente.fecha_ultimo_ingreso
+                    );
+                    localStorage.setItem(
+                        "userLastLogin",
+                        payload.cliente.fecha_ultimo_ingreso
+                    );
+                }
                 if (payload.cliente.nombre) {
                     localStorage.setItem("userNombre", payload.cliente.nombre);
                 }

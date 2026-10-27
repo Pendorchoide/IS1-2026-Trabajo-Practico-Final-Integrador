@@ -42,6 +42,12 @@ loginForm.addEventListener("submit", async (event) => {
             localStorage.setItem("userPassword", password);
             localStorage.setItem("userContacto", cliente.contacto);
             localStorage.setItem("userNombre", cliente.nombre);
+            if (cliente.fecha_ultimo_ingreso) {
+                localStorage.setItem(
+                    "userLastLogin",
+                    cliente.fecha_ultimo_ingreso
+                );
+            }
 
             showMessage(
                 messageDiv,

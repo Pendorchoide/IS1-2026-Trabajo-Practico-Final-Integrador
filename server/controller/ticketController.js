@@ -148,7 +148,8 @@ export class TicketController {
                                 cliente: {
                                     id: cliente.id,
                                     contacto: cliente.contacto,
-                                    nombre: cliente.nombre
+                                    nombre: cliente.nombre,
+                                    fecha_ultimo_ingreso: cliente.fecha_ultimo_ingreso
                                 },
                                 tickets: dataTickets.Items.map((t) => toTicketResumenDTO(t)),
                                 count: dataTickets.Items.length
@@ -172,7 +173,8 @@ export class TicketController {
                             cliente: {
                                 id: cliente.id,
                                 contacto: cliente.contacto,
-                                nombre: cliente.nombre
+                                nombre: cliente.nombre,
+                                fecha_ultimo_ingreso: cliente.fecha_ultimo_ingreso
                             },
                             ticket: toTicketDTO(ticketEncontrado)
                         }

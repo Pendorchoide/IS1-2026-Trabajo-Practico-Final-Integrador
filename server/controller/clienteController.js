@@ -85,12 +85,35 @@ export class ClienteController {
                 return;
             }
 
-            res.status(200).json({
-                status: "OK",
-                data: {
-                    cliente: toClienteAuthDTO(cliente)
+            const paramsUpdate = {
+                ExpressionAttributeNames: {
+                    "#f": "fecha_ultimo_ingreso"
+                },
+                ExpressionAttributeValues: {
+                    ":f": new Date().toISOString()
+                },
+                Key: { id: cliente.id },
+                ReturnValues: "ALL_NEW",
+                TableName: "cliente",
+                UpdateExpression: "SET #f = :f"
+            };
+
+            docClient.update(paramsUpdate, (updateError, updateData) => {
+                if (updateError) {
+                    res.status(500).json({
+                        status: "ERROR",
+                        message: "Error al actualizar la fecha de inicio de sesión."
+                    });
+                    return;
                 }
-            });    
+
+                res.status(200).json({
+                    status: "OK",
+                    data: {
+                        cliente: toClienteAuthDTO(updateData.Attributes)
+                    }
+                });
+            });
         };
 
         docClient.scan(paramsDB, callback);
@@ -257,6 +280,17 @@ export class ClienteController {
             res.status(400).json({ status: "ERROR", message: "Se requiere CONTRASEÑA"});
             return;
         }
+
+        if (!activo) {
+            res.status(400).json({ status: "ERROR", message: "Se requiere ACTIVO"});
+            return;
+        }
+
+        if (typeof activo !== "boolean") {
+            res.status(400).json({ status: "ERROR", message: "ACTIVO solo puede ser true o false"});
+            return;
+        }
+        
 
         const params = {
             TableName: "cliente",
