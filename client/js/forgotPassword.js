@@ -1,43 +1,70 @@
 import { API } from "./api.js";
+import {
+    clearMessage,
+    initPasswordToggles,
+    setButtonLoading,
+    showMessage
+} from "./ui.js";
 
 const forgotForm = document.getElementById("forgot-form");
 const messageDiv = document.getElementById("message");
+const submitButton = forgotForm.querySelector('button[type="submit"]');
+const newPasswordInput = document.getElementById("newPassword");
+const confirmInput = document.getElementById("confirmPassword");
 
-function showMessage(text, type) {
-    messageDiv.textContent = text;
-    messageDiv.className = `message ${type}`;
-}
+initPasswordToggles();
 
-forgotForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData(forgotForm);
-    const data = Object.fromEntries(formData);
-    
-    if (data.newPassword !== data.confirmPassword) {
-        showMessage("Las contraseñas no coinciden", "error");
+[newPasswordInput, confirmInput].forEach((input) => {
+    input.addEventListener("input", () => {
+        input.removeAttribute("aria-invalid");
+        clearMessage(messageDiv);
+    });
+});
+
+forgotForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearMessage(messageDiv);
+
+    const data = Object.fromEntries(new FormData(forgotForm));
+    const contacto = String(data.contacto || "").trim();
+    const newPassword = String(data.newPassword || "");
+
+    if (newPassword !== data.confirmPassword) {
+        confirmInput.setAttribute("aria-invalid", "true");
+        confirmInput.focus();
+        showMessage(messageDiv, "Las contraseñas no coinciden", "error");
         return;
     }
-    
-    const contacto = data.contacto;
-    const newPassword = data.newPassword;
-    
+
+    setButtonLoading(submitButton, true);
+
     try {
-        const res = await API.changePassword(contacto, newPassword);
-        
-        if (res.status === 200 && res.data.status === "OK") {
-            showMessage("Contraseña cambiada exitosamente. Redirigiendo al login...", "success");
+        const response = await API.changePassword(contacto, newPassword);
+
+        if (response.status === 200 && response.data.status === "OK") {
+            showMessage(
+                messageDiv,
+                "Contraseña cambiada exitosamente. Redirigiendo al login...",
+                "success"
+            );
+
             setTimeout(() => {
                 window.location.href = "login.html";
-            }, 1500);
+            }, 1200);
         } else {
-            showMessage(res.data.message || "Error al cambiar contraseña", "error");
+            showMessage(
+                messageDiv,
+                response.data.message || "Error al cambiar contraseña",
+                "error"
+            );
+            setButtonLoading(submitButton, false);
         }
     } catch (error) {
-        if (error.response) {
-            showMessage(error.response.data.message || "Error al cambiar contraseña", "error");
-        } else {
-            showMessage("Error de conexión con el servidor", "error");
-        }
+        const message = error.response
+            ? error.response.data.message || "Error al cambiar contraseña"
+            : "Error de conexión con el servidor";
+
+        showMessage(messageDiv, message, "error");
+        setButtonLoading(submitButton, false);
     }
 });

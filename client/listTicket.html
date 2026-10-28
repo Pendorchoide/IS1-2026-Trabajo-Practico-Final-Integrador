@@ -3,84 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Tickets - Sistema de Tickets de Reclamos</title>
-    <link rel="stylesheet" href="styles/styles.css">
+    <meta name="color-scheme" content="light">
+    <title>Mis tickets - Sistema de Tickets</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/tokens.css">
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/components.css">
 </head>
-<body class="tickets-page">
-    <div class="tickets-wrapper">
-        <header class="tickets-header">
-            <div class="tickets-header-left">
-                <h1>🎫 Mis Tickets de Reclamos</h1>
+<body>
+    <a class="skip-link" href="#main-content">Saltar al contenido</a>
+
+    <header class="app-header">
+        <div class="app-header-inner">
+            <a class="brand" href="listTicket.html" aria-label="Sistema de Tickets">
+                <span class="brand-mark-sm" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
+                        <path d="M13 5v2"/>
+                        <path d="M13 17v2"/>
+                        <path d="M13 11v2"/>
+                    </svg>
+                </span>
+                <span>Tickets</span>
+            </a>
+
+            <div class="user-menu">
+                <div class="avatar" id="user-avatar" aria-hidden="true">?</div>
+                <div class="user-meta">
+                    <strong id="user-nombre">Usuario</strong>
+                    <span id="user-contacto">contacto</span>
+                    <span>ID cliente: <span id="user-id" class="mono">—</span></span>
+                    <span>Último inicio: <time id="user-last-login">—</time></span>
+                </div>
+                <button class="btn btn-ghost btn-icon" id="logout-btn" type="button" aria-label="Cerrar sesión" title="Cerrar sesión">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" x2="9" y1="12" y2="12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main" id="main-content">
+        <div class="page-heading">
+            <div>
+                <h1>Mis tickets</h1>
                 <p>Listado y detalle de tus solicitudes</p>
             </div>
-            <button id="logout-btn" class="btn btn-secondary">Cerrar Sesión</button>
-        </header>
-        
-        <main class="tickets-content">
-            <div class="user-info-card">
-                <h2>👤 Información del Usuario</h2>
-                <p><strong>Nombre:</strong> <span id="user-nombre"></span></p>
-                <p><strong>Contacto:</strong> <span id="user-contacto"></span></p>
-                <p><strong>ID:</strong> <span id="user-id"></span></p>
-            </div>
-            
-            <h2 class="section-title">📋 Listado de Tickets</h2>
-            <div id="message" class="message"></div>
-            
-            <div class="table-container">
-                <table class="tickets-table">
-                    <thead>
-                        <tr>
-                            <th>ID Ticket</th>
-                            <th>Fecha de Apertura</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tickets-tbody">
-                    </tbody>
-                </table>
-            </div>
-            
-            <div id="empty-state" class="empty-state" style="display: none;">
-                <div class="icon">📭</div>
-                <p>No tienes tickets registrados</p>
-            </div>
-            
-            <div id="ticket-detail" class="ticket-detail-card">
-                <h2>🔍 Detalle del Ticket</h2>
-                <div class="detail-grid">
-                    <div class="detail-item">
-                        <label>ID Ticket</label>
-                        <div class="value" id="detail-id"></div>
+            <span class="page-count">
+                <span class="dot" aria-hidden="true"></span>
+                <span id="ticket-count-text">Cargando…</span>
+            </span>
+        </div>
+
+        <section class="stats-grid" aria-label="Resumen de tickets">
+            <article class="stat-card" data-tone="total">
+                <div class="stat-label"><span class="dot" aria-hidden="true"></span>Total</div>
+                <div class="stat-value" id="stat-total">—</div>
+            </article>
+            <article class="stat-card" data-tone="open">
+                <div class="stat-label"><span class="dot" aria-hidden="true"></span>Abiertos</div>
+                <div class="stat-value" id="stat-abiertos">—</div>
+            </article>
+            <article class="stat-card" data-tone="progress">
+                <div class="stat-label"><span class="dot" aria-hidden="true"></span>En proceso</div>
+                <div class="stat-value" id="stat-proceso">—</div>
+            </article>
+            <article class="stat-card" data-tone="closed">
+                <div class="stat-label"><span class="dot" aria-hidden="true"></span>Cerrados</div>
+                <div class="stat-value" id="stat-cerrados">—</div>
+            </article>
+        </section>
+
+        <div id="message" class="message" aria-live="polite"></div>
+
+        <div class="tickets-layout">
+            <section class="panel tickets-list-panel" aria-labelledby="list-title">
+                <header class="panel-header">
+                    <h2 class="panel-title" id="list-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <line x1="8" x2="21" y1="6" y2="6"/>
+                            <line x1="8" x2="21" y1="12" y2="12"/>
+                            <line x1="8" x2="21" y1="18" y2="18"/>
+                            <line x1="3" x2="3.01" y1="6" y2="6"/>
+                            <line x1="3" x2="3.01" y1="12" y2="12"/>
+                            <line x1="3" x2="3.01" y1="18" y2="18"/>
+                        </svg>
+                        Listado de tickets
+                    </h2>
+                </header>
+
+                <div class="table-container">
+                    <table class="tickets-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Ticket</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col"><span class="sr-only">Ver detalle</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tickets-tbody"></tbody>
+                    </table>
+                </div>
+
+                <div id="empty-state" class="empty-state hidden">
+                    <div class="empty-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+                            <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+                        </svg>
                     </div>
-                    <div class="detail-item">
-                        <label>ID Cliente</label>
-                        <div class="value" id="detail-cliente"></div>
+                    <h3>No tenés tickets</h3>
+                    <p>Cuando registres un reclamo, aparecerá en este listado.</p>
+                </div>
+            </section>
+
+            <aside class="panel detail-panel" id="ticket-detail" aria-label="Detalle del ticket">
+                <div id="detail-empty" class="detail-empty">
+                    <div class="empty-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+                            <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+                        </svg>
                     </div>
-                    <div class="detail-item">
-                        <label>Estado de Solución</label>
-                        <div class="value" id="detail-estado"></div>
-                    </div>
-                    <div class="detail-item">
-                        <label>Fecha de Apertura</label>
-                        <div class="value" id="detail-fecha-apertura"></div>
-                    </div>
-                    <div class="detail-item">
-                        <label>Último Contacto</label>
-                        <div class="value" id="detail-ultimo-contacto"></div>
+                    <h3>Detalle del ticket</h3>
+                    <p id="detail-empty-message">Seleccioná un ticket del listado para ver su información.</p>
+                </div>
+
+                <div id="detail-content" class="hidden">
+                    <header class="detail-header">
+                        <h2 class="detail-title">Ticket <span id="detail-id" class="mono"></span></h2>
+                        <div id="detail-estado"></div>
+                    </header>
+
+                    <div class="detail-body">
+                        <dl class="detail-meta">
+                            <div>
+                                <dt>ID cliente</dt>
+                                <dd id="detail-cliente"></dd>
+                            </div>
+                            <div>
+                                <dt>Fecha de apertura</dt>
+                                <dd id="detail-fecha-apertura"></dd>
+                            </div>
+                            <div>
+                                <dt>Último contacto</dt>
+                                <dd id="detail-ultimo-contacto"></dd>
+                            </div>
+                        </dl>
+
+                        <section class="detail-section">
+                            <h3>Descripción</h3>
+                            <p id="detail-descripcion"></p>
+                        </section>
+
+                        <section class="detail-section">
+                            <h3>Solución</h3>
+                            <p id="detail-solucion"></p>
+                        </section>
                     </div>
                 </div>
-                <div class="detail-section">
-                    <h3>📝 Descripción</h3>
-                    <p id="detail-descripcion"></p>
-                </div>
-                <div class="detail-section">
-                    <h3>💡 Solución</h3>
-                    <p id="detail-solucion"></p>
-                </div>
-            </div>
-        </main>
-    </div>
+            </aside>
+        </div>
+    </main>
+
     <script src="https://cdn.jsdelivr.net/npm/axios@1.7.7/dist/axios.min.js"></script>
     <script type="module" src="js/listTicket.js"></script>
 </body>
