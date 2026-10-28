@@ -16,3 +16,13 @@ En este proyecto se encuentran todas las modificacion y agregador realizados en 
 - `client/`: interfaz web del sistema (HTML, CSS y JS).
 - `server/`: backend con rutas, controladores y utilidades.
 - `README.md`: documentación del proyecto.
+
+## Cómo ejecutar el proyecto
+
+1. Abrir una terminal en la carpeta `server`.
+2. Ejecutar:
+   ```bash
+   npm install
+   npm start
+   ```
+3. Abrir el archivo `client/login.html` en el navegador para usar la aplicación.
